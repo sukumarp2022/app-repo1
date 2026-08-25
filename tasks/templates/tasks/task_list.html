@@ -1,0 +1,58 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Small Wins</title>
+    <link rel="stylesheet" href="{% static 'tasks/styles.css' %}">
+</head>
+<body>
+    <main class="page-shell">
+        <header class="intro">
+            <p class="eyebrow">A tiny Django demo</p>
+            <h1>Small wins.</h1>
+            <p class="intro-copy">Keep the next few things visible, then make room for the next one.</p>
+        </header>
+
+        <section class="workspace" aria-labelledby="task-list-heading">
+            <form class="add-task" method="post">
+                {% csrf_token %}
+                <label for="{{ form.title.id_for_label }}">Add a task</label>
+                <div class="input-row">
+                    {{ form.title }}
+                    <button type="submit">Add task</button>
+                </div>
+                {% if form.title.errors %}
+                    <p class="form-error">{{ form.title.errors|striptags }}</p>
+                {% endif %}
+            </form>
+
+            <div class="task-heading">
+                <h2 id="task-list-heading">Your list</h2>
+                <span>{{ tasks|length }} task{{ tasks|length|pluralize }}</span>
+            </div>
+
+            {% if tasks %}
+                <ul class="task-list">
+                    {% for task in tasks %}
+                        <li class="task-item{% if task.completed %} is-complete{% endif %}">
+                            <form method="post" action="{% url 'tasks:toggle' task.pk %}">
+                                {% csrf_token %}
+                                <button class="status-button" type="submit" aria-label="{% if task.completed %}Reopen{% else %}Complete{% endif %} {{ task.title }}">
+                                    <span aria-hidden="true">{% if task.completed %}&#10003;{% endif %}</span>
+                                </button>
+                            </form>
+                            <span class="task-title">{{ task.title }}</span>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="empty-state">Nothing here yet. Add one small thing to get started.</p>
+            {% endif %}
+        </section>
+
+        <footer class="footer-note">Built with Django and a small amount of HTML.</footer>
+    </main>
+</body>
+</html>
