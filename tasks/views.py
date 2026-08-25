@@ -24,5 +24,5 @@ def toggle_task(request, pk):
 	if request.method == 'POST':
 		task = get_object_or_404(Task, pk=pk)
 		task.completed = not task.completed
-		task.save(update_fields=('completed',))
+		task.save(update_fields=('completed.',))
 	return redirect('tasks:list')
